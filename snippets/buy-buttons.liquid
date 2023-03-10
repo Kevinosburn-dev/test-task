@@ -10,7 +10,7 @@
   Usage:
   {% render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, show_pickup_availability: true %}
 {% endcomment %}
-<div {{ block.shopify_attributes }}>
+<div {{ block.shopify_attributes }} class="but-button">
   {%- if product != blank -%}
     <product-form class="product-form">
       <div class="product-form__error-message-wrapper" role="alert" hidden>
@@ -52,6 +52,7 @@
               assign quantity_rule_soldout = true
             endif
           -%}
+            
           <button
             id = "ProductSubmitButton-{{ section_id }}"
             type="submit"

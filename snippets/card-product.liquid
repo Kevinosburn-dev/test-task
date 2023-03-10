@@ -198,6 +198,29 @@
 
             {% render 'price', product: card_product, price_class: '' %}
           </div>
+          
+          {%- for option in card_product.options_with_values -%}
+            <fieldset class="js product-form__input">
+              {%- for value in option.values -%}
+                <input
+                  type="radio"
+                  id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                  name="{{ option.name }}"
+                  value="{{ value | escape }}"
+                  form="{{ product_form_id }}"
+                  {% if option.selected_value == value %}
+                    checked
+                  {% endif %}
+                  {% if option_disabled %}
+                    class="disabled"
+                  {% endif %}
+                >
+                  <label class="custom-{{option.name}}" {% if option.name == 'Color' %}  data-color-name="{{value}}" {% endif %} for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
+                  <span class="visually-hidden">{{ 'products.product.variant_sold_out_or_unavailable' | t }}</span>
+                  </label>
+              {%- endfor -%}
+            </fieldset>
+          {%- endfor -%}
         </div>
         {%- if show_quick_add -%}
           <div class="quick-add no-js-hidden">
@@ -374,6 +397,14 @@
               <div class="caption-with-letter-spacing light">{{ 'products.product.vendor' | t }}</div>
             {%- endif -%}
             {% render 'price' %}
+
+            {%- for option in card_product.options_with_values -%}
+              <fieldset class="js product-form__input">
+                <legend class="form__label">{{ option.name }}</legend>
+                {% render 'product-variant-options', product: card_product, option: option, block: block %}
+              </fieldset>
+            {%- endfor -%}
+
           </div>
         </div>
       </div>
