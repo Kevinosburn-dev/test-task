@@ -2,7 +2,7 @@
 {{ 'component-loading-overlay.css' | asset_url | stylesheet_tag }}
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
-
+{{ 'cs-main-collection-product.css' | asset_url | stylesheet_tag }}
 <link
   rel="preload"
   href="{{ 'component-rte.css' | asset_url }}"
@@ -31,7 +31,7 @@
   }
 {%- endstyle -%}
 
-<div class="section-{{ section.id }}-padding">
+<div class="collection-product section-{{ section.id }}-padding">
   {% comment %} Sort is the first tabbable element when filter type is vertical {% endcomment %}
   {%- if section.settings.enable_sorting and section.settings.filter_type == 'vertical' -%}
     <facet-filters-form class="facets facets-vertical-sort page-width small-hide no-js-hidden">

@@ -1,6 +1,16 @@
+<link rel="stylesheet" href="{{ 'cs-main-product.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript>{{ 'cs-main-product.css' | asset_url | stylesheet_tag }}</noscript>
+
+<script src="{{ 'cs-product-modal.js' | asset_url }}" defer="defer"></script>
+
+{% comment %} <link rel="stylesheet" href="{{ 'cs-draw-cart.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript>{{ 'cs-draw-cart.css' | asset_url | stylesheet_tag }}</noscript>
+<script src="{{ 'cs-draw-cart.js' | asset_url }}" defer="defer"></script> {% endcomment %}
+
+
 <section
   id="MainProduct-{{ section.id }}"
-  class="page-width section-{{ section.id }}-padding"
+  class="custom-container section-{{ section.id }}-padding section-{{ section.id }}-bg"
   data-section="{{ section.id }}"
 >
   {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
@@ -11,13 +21,13 @@
   {{ 'component-rating.css' | asset_url | stylesheet_tag }}
   {{ 'component-loading-overlay.css' | asset_url | stylesheet_tag }}
   {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
-
+  {{ 'cs-main-prodcut.css' | asset_url | stylesheet_tag }}
   {%- style -%}
     .section-{{ section.id }}-padding {
       padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
       padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
     }
-
+    
     @media screen and (min-width: 750px) {
       .section-{{ section.id }}-padding {
         padding-top: {{ section.settings.padding_top }}px;
@@ -60,7 +70,7 @@
     <div class="grid__item product__media-wrapper{% if section.settings.media_position == 'right' %} medium-hide large-up-hide{% endif %}">
       {% render 'product-media-gallery', variant_images: variant_images %}
     </div>
-    <div class="product__info-wrapper grid__item{% if settings.page_width > 1400 and section.settings.media_size == "small" %} product__info-wrapper--extra-padding{% endif %}">
+    <div class="custom-product product__info-wrapper grid__item{% if settings.page_width > 1400 and section.settings.media_size == "small" %} product__info-wrapper--extra-padding{% endif %}">
       <product-info
         id="ProductInfo-{{ section.id }}"
         data-section="{{ section.id }}"
@@ -74,12 +84,19 @@
             {%- when '@app' -%}
               {% render block %}
             {%- when 'text' -%}
-              <p
-                class="product__text{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}"
-                {{ block.shopify_attributes }}
-              >
-                {{- block.settings.text -}}
-              </p>
+              <div class="vendor">
+                <p
+                  class="product__text{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}"
+                  {{ block.shopify_attributes }}
+                >
+                  {{- block.settings.text -}}
+                </p>
+                <div class="mini-blog">
+                  <svg width="14" height="13" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.00035 1.01932C8.56635 -0.38668 10.9863 -0.340013 12.495 1.17132C14.003 2.68332 14.055 5.09132 12.6523 6.66199L6.99901 12.3233L1.34701 6.66199C-0.0556549 5.09132 -0.00298804 2.67932 1.50435 1.17132C3.01435 -0.338013 5.42968 -0.38868 7.00035 1.01932ZM11.551 2.11332C10.551 1.11199 8.93768 1.07132 7.89101 2.01132L7.00101 2.80999L6.11035 2.01199C5.06035 1.07065 3.45035 1.11199 2.44768 2.11465C1.45435 3.10799 1.40435 4.69799 2.31968 5.74865L6.99968 10.436L11.6797 5.74932C12.5957 4.69799 12.5457 3.10999 11.551 2.11332Z" fill="#222222"/>
+                  </svg>                    
+                </div>
+              </div>
             {%- when 'title' -%}
               <div class="product__title" {{ block.shopify_attributes }}>
                 <h1>{{ product.title | escape }}</h1>
@@ -90,7 +107,7 @@
                 </a>
               </div>
             {%- when 'price' -%}
-              <div class="no-js-hidden" id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
+              <div class="no-js-hidden custom-price-part" id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
                 {%- render 'price',
                   product: product,
                   use_variant: true,
@@ -293,7 +310,6 @@
                   id="ProductPopup-{{ block.id }}"
                   class="product-popup-modal__button link"
                   type="button"
-                  aria-haspopup="dialog"
                 >
                   {{ block.settings.text | default: block.settings.page.title }}
                 </button>
@@ -301,6 +317,7 @@
               <a href="{{ block.settings.page.url }}" class="product-popup-modal__button link no-js">
                 {{- block.settings.text -}}
               </a>
+              
             {%- when 'share' -%}
               {% assign share_url = product.selected_variant.url | default: product.url | prepend: request.origin %}
               {% render 'share-button',
@@ -309,7 +326,7 @@
               %}
 
             {%- when 'variant_picker' -%}
-              {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
+              {% render 'product-variant-picker', product: product, guid_text: guid_text, block: block, product_form_id: product_form_id %}
             {%- when 'buy_buttons' -%}
               {%- render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true -%}
             {%- when 'rating' -%}
@@ -472,6 +489,103 @@
         <div class="product-popup-modal__content-info">
           <h1 class="h2">{{ block.settings.page.title }}</h1>
           {{ block.settings.page.content }}
+          <div class="custom-draw">
+            <div class="title-wrapper">
+              <div class="title">
+                <h1> {{ block.settings.modal_title }}</h1>
+                <div class="check_part">
+                  <select class="country">
+                    <option>USA</option>
+                    <option>CAD</div>
+                  </select>
+                  <div class="radio-btn">
+                    <form action="#">
+                      <div class="form__group">
+                        <div class="form__radio-group">
+                          <input type="radio" name="size" id="small" class="form__radio-input" checked>
+                          <label class="form__label-radio" for="small" class="form__radio-label">
+                            <span class="form__radio-button"></span> Cm
+                          </label>
+                        </div>
+                        <div class="form__radio-group">
+                          <input type="radio" name="size" id="large" class="form__radio-input">
+                          <label class="form__label-radio" for="large" class="form__radio-label">
+                            <span class="form__radio-button"></span> Inches
+                          </label>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="cotent">
+              {% comment %} {{ block.settings.table_image | img_url: 'medium' | img_tag }} {% endcomment %}
+              <table>
+                <tr class="heading">
+                  <th>SIZE</th>
+                  <th>CHEST</th>
+                  <th>WAIST</th>
+                  <th>HIPS</th>
+                  <th>insiam</th>
+                </tr>
+                <tr>
+                  <td class="car-name">
+                    XS
+                  </td>
+                  <td>32-34cm</td>
+                  <td>24-26cm</td>
+                  <td>34-36cm</td>
+                  <td>28cm</td>
+                </tr>
+                <tr>
+                  <td class="car-name">
+                    S
+                  </td>
+                  <td>34-36cm</td>
+                  <td>27-28cm</td>
+                  <td>37-38cm</td>
+                  <td>28.5cm</td>
+                </tr>
+                <tr>
+                  <td class="car-name">
+                    M
+                  </td>
+                  <td>36-38cm</td>
+                  <td>29-30cm</td>
+                  <td>39-40cm</td>
+                  <td>29cm</td>
+                </tr>
+                <tr>
+                  <td class="car-name">
+                    L
+                  </td>
+                  <td>38-40cm</td>
+                  <td>31-32cm</td>
+                  <td>41-42cm</td>
+                  <td>29.5cm</td>
+                </tr>
+                <tr>
+                  <td class="car-name">
+                    XL
+                  </td>
+                  <td>40-42cm</td>
+                  <td>33-34cm</td>
+                  <td>43-44cm</td>
+                  <td>30cm</td>
+                </tr>
+              </table>
+            </div>
+            <div class="description">
+              <div class="text">
+                <h1>{{ block.settings.des_title}}
+                <p class="des-text">{{ block.settings.des_text }}</p>
+              </div>
+              <div class="image">
+                {{ block.settings.draw_image | img_url: 'medium' | img_tag }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </modal-dialog>
@@ -523,6 +637,8 @@
       assign seo_media = product.featured_media
     endif
   -%}
+
+  
 
   <script type="application/ld+json">
     {
@@ -992,6 +1108,35 @@
           "id": "page",
           "type": "page",
           "label": "t:sections.main-product.blocks.popup.settings.page.label"
+        },
+        {
+          "type": "header",
+          "content": "Modal"
+        },
+        {
+          "type": "text",
+          "id": "modal_title",
+          "label": "Modal title"
+        },
+        {
+          "type": "text",
+          "id": "des_title",
+          "label": "Description Title"
+        },
+        {
+          "type": "text",
+          "id": "des_text",
+          "label": "Text"
+        },
+        {
+          "type": "image_picker",
+          "id": "table_image",
+          "label": "Table"
+        },
+        {
+          "type": "image_picker",
+          "id": "draw_image",
+          "label": "Image"
         }
       ]
     },
@@ -1892,6 +2037,28 @@
           "info": "t:sections.main-product.blocks.icon_with_text.settings.heading.info"
         }
       ]
+    },
+    {
+      "type": "item",
+      "name": "item",
+      "settings":[
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "btn_name",
+          "label": "Button title",
+          "default": "Learn more"
+        },
+        {
+          "type": "url",
+          "id": "btn_link",
+          "label": "Link"
+        }
+      ]
     }
   ],
   "settings": [
@@ -1900,6 +2067,16 @@
       "id": "enable_sticky_info",
       "default": true,
       "label": "t:sections.main-product.settings.enable_sticky_info.label"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color"
+    },
+    {
+      "type": "text",
+      "id": "guid_text",
+      "label": "Guid text title"
     },
     {
       "type": "header",

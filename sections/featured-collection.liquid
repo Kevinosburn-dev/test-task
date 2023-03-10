@@ -1,6 +1,7 @@
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-rte.css' | asset_url | stylesheet_tag }}
+{{ 'cs-featured-collection.css' | asset_url | stylesheet_tag }}
 
 <link rel="stylesheet" href="{{ 'component-slider.css' | asset_url }}" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="{{ 'template-collection.css' | asset_url }}" media="print" onload="this.media='all'">
@@ -47,8 +48,8 @@
 -%}
 
 <div class="color-{{ section.settings.color_scheme }} isolate gradient">
-  <div class="collection section-{{ section.id }}-padding{% if section.settings.full_width %} collection--full-width{% endif %}">
-    <div class="collection__title title-wrapper title-wrapper--no-top-margin page-width{% if show_mobile_slider %} title-wrapper--self-padded-tablet-down{% endif %}{% if show_desktop_slider %} collection__title--desktop-slider{% endif %}">
+  <div class="custom-featured-collection collection section-{{ section.id }}-padding{% if section.settings.full_width %} collection--full-width{% endif %}">
+    <div class=" collection__title title-wrapper title-wrapper--no-top-margin page-width{% if show_mobile_slider %} title-wrapper--self-padded-tablet-down{% endif %}{% if show_desktop_slider %} collection__title--desktop-slider{% endif %}">
       {%- if section.settings.title != blank -%}
         <h2 class="title {{ section.settings.heading_size }}">{{ section.settings.title | escape }}</h2>
       {%- endif -%}
@@ -87,6 +88,7 @@
               show_quick_add: section.settings.enable_quick_add,
               section_id: section.id
             %}
+            
           </li>
         {%- else -%}
           {%- for i in (1..4) -%}
@@ -133,7 +135,7 @@
           class="{% if section.settings.view_all_style == 'link' %}link underlined-link{% elsif section.settings.view_all_style == 'solid' %}button{% else %}button button--secondary{% endif %}"
           aria-label="{{ 'sections.featured_collection.view_all_label' | t: collection_name: section.settings.collection.title }}"
         >
-          {{ 'sections.featured_collection.view_all' | t }}
+          {{ section.settings.btn_title }}
         </a>
       </div>
     {%- endif -%}
@@ -240,6 +242,12 @@
       "id": "show_view_all",
       "default": true,
       "label": "t:sections.featured-collection.settings.show_view_all.label"
+    },
+    {
+      "type": "text",
+      "id": "btn_title",
+      "label": "Button title",
+      "default": "Shop all"
     },
     {
       "type": "select",
